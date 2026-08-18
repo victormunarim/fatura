@@ -9,14 +9,17 @@ Além de visualizar de forma personalizavel.
 
 ## Requisitos funcionais
 
-* Deve ser possível ordenar os valores;
-* Deve ter filtros de pesquisa para agrupar as compras por categoria ou descrição;
+* Deve ser possível ordenar os valores; Ex: Usuário escolhe critério de ordenação (crescente/decrescente) → sistema reordena a lista pelo valor.
+* Deve ter filtros de pesquisa para agrupar as compras por categoria ou descrição; Ex: Usuário seleciona uma categoria ou descrição → sistema exibe apenas os lançamentos correspondentes.
+* Upload de arquivos de fatura em formato PDF; Ex: Usuário seleciona um arquivo PDF → sistema recebe o arquivo.
+* Validação do tipo e formato do arquivo; Ex: Sistema verifica se a extensão é .pdf e se o tamanho está dentro do limite → aprova o arquivo para processamento.
+* Processamento automático da fatura após o upload; Ex: Sistema lê o PDF, extrai data, descrição, valor e parcela de cada lançamento, e os disponibiliza para listagem.
 
 ## Requisitos não funcionais
 
-* Upload de arquivos de fatura em formato PDF;
-* Validação do tipo e formato do arquivo;
-* Processamento automático da fatura após o upload;
+* Desempenho: Processar faturas de até um tamanho específico (a definir).
+* Confiabilidade: Falha na extração da fatura não compromete o resto da aplicação.
+* Compatibilidade: suporte para fatura de 1 banco específico (a definir).
 
 ## Modelagem
 
