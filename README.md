@@ -1,6 +1,6 @@
 # Fatura
 
-Sistema backend para upload, processamento e organização de faturas de cartão de crédito desenvolvido para web com o objetivo de melhorar a organização financeira
+Sistema backend para análise, processamento e organização de faturas de cartão de crédito desenvolvido aplicações web com o objetivo de melhorar a organização financeira
 
 ## Público alvo
 
@@ -19,15 +19,14 @@ Além de visualizar de forma personalizavel.
 
 * Desempenho: Processar faturas de até um tamanho específico (a definir).
 * Confiabilidade: Falha na extração da fatura não compromete o resto da aplicação.
-* Compatibilidade: suporte para fatura de 1 banco específico (a definir).
+* Compatibilidade: suporte para fatura do banco Itaú).
 
 ## Modelagem
 
-O sistema tera uma interface simples, somente para upload de arquivos e listagem na web.
+O sistema sera somente o back-end e o arquivo de fatura deve estar em fatura/fatura.pdf.
 Os gastos processados deverão ser disponibilizados de forma estruturada.
 
 ## Stacks
 
 * Spring framework;
 * Java 25;
-* Banco H2;
