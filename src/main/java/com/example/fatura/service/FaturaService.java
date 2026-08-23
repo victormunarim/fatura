@@ -7,9 +7,11 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class FaturaService {
@@ -64,5 +66,12 @@ public class FaturaService {
         }
 
         return compras;
+    }
+
+    public List<Map<String, String>> analisarComprasOrdenado(List<String> linhas) {
+        List<Map<String, String>> compras = analisarCompras(linhas);
+        return compras.stream()
+                .sorted(Comparator.comparing(m -> Double.parseDouble(m.get("Valor"))))
+                .collect(Collectors.toList());
     }
 }

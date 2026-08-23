@@ -13,13 +13,21 @@ public class FaturaController {
 
     private final FaturaService faturaService;
 
+    private final String CAMINHO = "fatura/fatura.pdf";
+
     public FaturaController(FaturaService faturaService) {
         this.faturaService = faturaService;
     }
 
     @GetMapping("/compras")
     public List<Map<String, String>> getFatura() throws IOException {
-        List<String> lines = faturaService.extrairLinhas("fatura/fatura.pdf");
-        return faturaService.analisarCompras(lines);
+        List<String> linhas = faturaService.extrairLinhas(CAMINHO);
+        return faturaService.analisarCompras(linhas);
+    }
+
+    @GetMapping("/compras/ordenado")
+    public List<Map<String, String>> getComprasOrdenado() throws IOException {
+        List<String> linhas = faturaService.extrairLinhas(CAMINHO);
+        return faturaService.analisarComprasOrdenado(linhas);
     }
 }
