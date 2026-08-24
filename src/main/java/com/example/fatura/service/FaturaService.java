@@ -1,20 +1,30 @@
 package com.example.fatura.service;
 
+import com.example.fatura.model.Compra;
+import com.example.fatura.repository.CompraRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Service
 public class FaturaService {
+
+    private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    private final CompraRepository lancamentoRepository;
+
+    public FaturaService(CompraRepository lancamentoRepository) {
+        this.lancamentoRepository = lancamentoRepository;
+    }
 
     public List<String> extrairLinhas(String caminhoPdf) throws IOException {
         try (PDDocument documento = PDDocument.load(new File(caminhoPdf))) {
@@ -33,56 +43,49 @@ public class FaturaService {
         }
     }
 
-    public List<Map<String, String>> analisarCompras(List<String> linhas) {
-        List<Map<String, String>> compras = new ArrayList<>();
+    public List<Compra> analisarCompras(List<String> linhas) {
+        List<Compra> compras = new ArrayList<>();
 
-        var padrao = Pattern.compile(
-                "^(\\d{2}/\\d{2}/\\d{4})\\s+(.+)$"
-        );
-
-        var valorPattern = Pattern.compile(
-                "(?<![\\d.])-?\\d+(?:\\.\\d{3})*,\\d{2}(?!\\d)"
-        );
+        var padrao = Pattern.compile("^(\\d{2}/\\d{2}/\\d{4})\\s+(.+)$");
+        var valorPattern = Pattern.compile("(?<![\\d.])-?\\d+(?:\\.\\d{3})*,\\d{2}(?!\\d)");
 
         for (String linha : linhas) {
             var matcher = padrao.matcher(linha);
+            if (!matcher.find()) continue;
 
-            if (!matcher.find()) {
-                continue;
-            }
-
-            String data = matcher.group(1);
+            String dataTexto = matcher.group(1);
             String restante = matcher.group(2);
 
-            if (restante.contains("SALDO DO DIA")) {
-                continue;
-            }
+            if (restante.contains("SALDO DO DIA")) continue;
 
             var valorMatcher = valorPattern.matcher(restante);
+            if (!valorMatcher.find()) continue;
 
-            if (!valorMatcher.find()) {
-                continue;
-            }
-
-            String valor = valorMatcher.group();
+            String valorTexto = valorMatcher.group().replace(".", "").replace(",", ".");
             String descricao = restante.substring(0, valorMatcher.start()).trim();
 
-            valor = valor.replace(".", "").replace(",", ".");
+            Compra lancamento = new Compra();
+            lancamento.setData(LocalDate.parse(dataTexto, FORMATO_DATA));
+            lancamento.setDescricao(descricao);
+            lancamento.setValor(new BigDecimal(valorTexto));
+            lancamento.setCategoria(classificar(descricao));
 
-            compras.add(Map.of(
-                    "Data", data,
-                    "Descrição", descricao,
-                    "Valor", valor
-            ));
+            compras.add(lancamento);
         }
 
         return compras;
     }
 
-    public List<Map<String, String>> analisarComprasOrdenado(List<String> linhas) {
-        List<Map<String, String>> compras = analisarCompras(linhas);
-        return compras.stream()
-                .sorted(Comparator.comparing(item -> Double.parseDouble(item.get("Valor"))))
-                .collect(Collectors.toList());
+    private String classificar(String descricao) {
+        if (descricao.startsWith("PIX")) return "Pix";
+        if (descricao.startsWith("TED")) return "Transferência";
+        if (descricao.startsWith("TAR")) return "Tarifa";
+        if (descricao.startsWith("REND")) return "Rendimento";
+        if (descricao.startsWith("FATURA PAGA")) return "Pagamento de fatura";
+        return "Outros";
+    }
+
+    public List<Compra> salvar(List<Compra> lancamentos) {
+        return lancamentoRepository.saveAll(lancamentos);
     }
 }
