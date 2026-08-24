@@ -35,34 +35,45 @@ public class FaturaService {
 
     public List<Map<String, String>> analisarCompras(List<String> linhas) {
         List<Map<String, String>> compras = new ArrayList<>();
-        boolean dentroSecao = false;
-        var padrao = Pattern.compile("(\\d{2}/\\d{2})\\s+(.+?)\\s+(\\d+[.,]\\d{2})(?:\\s+(.*))?");
+
+        var padrao = Pattern.compile(
+                "^(\\d{2}/\\d{2}/\\d{4})\\s+(.+)$"
+        );
+
+        var valorPattern = Pattern.compile(
+                "(?<![\\d.])-?\\d+(?:\\.\\d{3})*,\\d{2}(?!\\d)"
+        );
+
         for (String linha : linhas) {
-            if (linha.contains("Lançamentos: compras e saques")) {
-                dentroSecao = true;
-                continue;
-            }
-
-            if (linha.contains("Lançamentos produtos e serviços")) {
-                dentroSecao = false;
-                continue;
-            }
-
-            if (!dentroSecao) {
-                continue;
-            }
-
             var matcher = padrao.matcher(linha);
-            if (matcher.find()) {
-                String data = matcher.group(1);
-                String descricao = matcher.group(2).trim();
-                String valor = matcher.group(3).replace(',', '.');
-                compras.add(Map.of(
-                        "Data", data,
-                        "Descrição", descricao,
-                        "Valor", valor
-                ));
+
+            if (!matcher.find()) {
+                continue;
             }
+
+            String data = matcher.group(1);
+            String restante = matcher.group(2);
+
+            if (restante.contains("SALDO DO DIA")) {
+                continue;
+            }
+
+            var valorMatcher = valorPattern.matcher(restante);
+
+            if (!valorMatcher.find()) {
+                continue;
+            }
+
+            String valor = valorMatcher.group();
+            String descricao = restante.substring(0, valorMatcher.start()).trim();
+
+            valor = valor.replace(".", "").replace(",", ".");
+
+            compras.add(Map.of(
+                    "Data", data,
+                    "Descrição", descricao,
+                    "Valor", valor
+            ));
         }
 
         return compras;
@@ -71,7 +82,7 @@ public class FaturaService {
     public List<Map<String, String>> analisarComprasOrdenado(List<String> linhas) {
         List<Map<String, String>> compras = analisarCompras(linhas);
         return compras.stream()
-                .sorted(Comparator.comparing(m -> Double.parseDouble(m.get("Valor"))))
+                .sorted(Comparator.comparing(item -> Double.parseDouble(item.get("Valor"))))
                 .collect(Collectors.toList());
     }
 }

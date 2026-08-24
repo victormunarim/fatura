@@ -13,7 +13,7 @@ public class FaturaController {
 
     private final FaturaService faturaService;
 
-    private final String CAMINHO = "fatura/fatura.pdf";
+    private final String CAMINHO = "fatura/itau_extrato.pdf";
 
     public FaturaController(FaturaService faturaService) {
         this.faturaService = faturaService;
