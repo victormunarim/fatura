@@ -20,10 +20,10 @@ public class FaturaService {
 
     private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    private final CompraRepository lancamentoRepository;
+    private final CompraRepository compraRepository;
 
     public FaturaService(CompraRepository lancamentoRepository) {
-        this.lancamentoRepository = lancamentoRepository;
+        this.compraRepository = lancamentoRepository;
     }
 
     public List<String> extrairLinhas(String caminhoPdf) throws IOException {
@@ -86,6 +86,6 @@ public class FaturaService {
     }
 
     public List<Compra> salvar(List<Compra> lancamentos) {
-        return lancamentoRepository.saveAll(lancamentos);
+        return compraRepository.saveAll(lancamentos);
     }
 }
