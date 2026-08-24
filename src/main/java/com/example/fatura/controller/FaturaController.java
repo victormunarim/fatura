@@ -1,12 +1,12 @@
 package com.example.fatura.controller;
 
+import com.example.fatura.model.Compra;
 import com.example.fatura.service.FaturaService;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class FaturaController {
@@ -19,15 +19,10 @@ public class FaturaController {
         this.faturaService = faturaService;
     }
 
-    @GetMapping("/compras")
-    public List<Map<String, String>> getFatura() throws IOException {
+    @PostMapping("/faturas")
+    public List<Compra> processarFatura() throws IOException {
         List<String> linhas = faturaService.extrairLinhas(CAMINHO);
-        return faturaService.analisarCompras(linhas);
-    }
-
-    @GetMapping("/compras/ordenado")
-    public List<Map<String, String>> getComprasOrdenado() throws IOException {
-        List<String> linhas = faturaService.extrairLinhas(CAMINHO);
-        return faturaService.analisarComprasOrdenado(linhas);
+        List<Compra> compras = faturaService.analisarCompras(linhas);
+        return faturaService.salvar(compras);
     }
 }
