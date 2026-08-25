@@ -1,7 +1,9 @@
 package com.example.fatura.service;
 
 import com.example.fatura.model.Compra;
+import com.example.fatura.model.Fatura;
 import com.example.fatura.repository.CompraRepository;
+import com.example.fatura.repository.FaturaRepository;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,12 @@ public class FaturaService {
 
     private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    private final FaturaRepository faturaRepository;
     private final CompraRepository compraRepository;
 
-    public FaturaService(CompraRepository lancamentoRepository) {
-        this.compraRepository = lancamentoRepository;
+    public FaturaService(CompraRepository compraRepository, FaturaRepository faturaRepository) {
+        this.compraRepository = compraRepository;
+        this.faturaRepository = faturaRepository;
     }
 
     public List<String> extrairLinhas(String caminhoPdf) throws IOException {
@@ -64,13 +68,13 @@ public class FaturaService {
             String valorTexto = valorMatcher.group().replace(".", "").replace(",", ".");
             String descricao = restante.substring(0, valorMatcher.start()).trim();
 
-            Compra lancamento = new Compra();
-            lancamento.setData(LocalDate.parse(dataTexto, FORMATO_DATA));
-            lancamento.setDescricao(descricao);
-            lancamento.setValor(new BigDecimal(valorTexto));
-            lancamento.setCategoria(classificar(descricao));
+            Compra compra = new Compra();
+            compra.setData(LocalDate.parse(dataTexto, FORMATO_DATA));
+            compra.setDescricao(descricao);
+            compra.setValor(new BigDecimal(valorTexto));
+           compra.setCategoria(classificar(descricao));
 
-            compras.add(lancamento);
+            compras.add(compra);
         }
 
         return compras;
@@ -85,7 +89,11 @@ public class FaturaService {
         return "Outros";
     }
 
-    public List<Compra> salvar(List<Compra> lancamentos) {
-        return compraRepository.saveAll(lancamentos);
+    public List<Compra> salvar(List<Compra> compras) {
+        Fatura fatura = new Fatura();
+        fatura.setDataUpload(LocalDate.now());
+        faturaRepository.save(fatura);
+        compras.forEach(c -> c.setFatura(fatura));
+        return compraRepository.saveAll(compras);
     }
 }

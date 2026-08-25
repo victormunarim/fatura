@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Data
 public class Fatura {
     @Id @GeneratedValue
     private Long id;
