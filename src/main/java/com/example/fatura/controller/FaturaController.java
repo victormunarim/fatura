@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 @RestController
 public class FaturaController {
 
@@ -20,9 +22,11 @@ public class FaturaController {
     }
 
     @PostMapping("/faturas")
-    public List<Compra> processarFatura() throws IOException {
+    public ResponseEntity<List<Compra>> processarFatura() throws IOException {
         List<String> linhas = faturaService.extrairLinhas(CAMINHO);
         List<Compra> compras = faturaService.analisarCompras(linhas);
-        return faturaService.salvar(compras);
+        List<Compra> saved = faturaService.salvar(compras);
+
+        return ResponseEntity.ok(saved);
     }
 }
