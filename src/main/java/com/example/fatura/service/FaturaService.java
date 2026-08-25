@@ -97,4 +97,9 @@ public class FaturaService {
 
         return compraRepository.saveAll(compras);
     }
+
+    public void deleteAll() {
+        compraRepository.deleteAll();
+        faturaRepository.deleteAll();
+    }
 }

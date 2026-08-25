@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 public class FaturaController {
@@ -28,5 +29,11 @@ public class FaturaController {
         List<Compra> saved = faturaService.salvar(compras);
 
         return ResponseEntity.ok(saved);
+    }
+
+    @DeleteMapping("/faturas/deleta")
+    public ResponseEntity<Void> deleteAll() {
+        faturaService.deleteAll();
+        return ResponseEntity.noContent().build();
     }
 }
