@@ -4,6 +4,7 @@ import com.example.fatura.model.Compra;
 import com.example.fatura.service.CompraService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -32,6 +33,12 @@ public class CompraController {
     @GetMapping("/compras/ordenado/decrescente")
     public ResponseEntity<List<Compra>> getComprasOrdenadoDescendente() {
         List<Compra> compras = compraService.getAllOrdenadoDescendente();
+        return ResponseEntity.ok(compras);
+    }
+
+    @GetMapping("/compras/categoria/{categoria}")
+    public ResponseEntity<List<Compra>> getComprasPorCategoria(@PathVariable String categoria) {
+        List<Compra> compras = compraService.findByCategoria(categoria);
         return ResponseEntity.ok(compras);
     }
 }

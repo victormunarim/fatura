@@ -46,4 +46,14 @@ public class CompraService {
 
         return compras;
     }
+    public List<Compra> findByCategoria(String categoria) {
+        List<Compra> compras = compraRepository.findByCategoriaIgnoreCase(categoria);
+
+        if (compras.isEmpty()) {
+            throw new ResourceNotFoundException("Nenhuma compra encontrada para a categoria: " + categoria);
+        }
+
+        return compras;
+    }
 }
+
