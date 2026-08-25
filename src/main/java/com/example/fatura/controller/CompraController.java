@@ -23,9 +23,15 @@ public class CompraController {
         return ResponseEntity.ok(compras);
     }
 
-    @GetMapping("/compras/ordenado")
-    public ResponseEntity<List<Compra>> getComprasOrdenado() {
-        List<Compra> compras = compraService.getAllOrdenado();
+    @GetMapping("/compras/ordenado/crescente")
+    public ResponseEntity<List<Compra>> getComprasOrdenadoCrescente() {
+        List<Compra> compras = compraService.getAllOrdenadoCrescente();
+        return ResponseEntity.ok(compras);
+    }
+
+    @GetMapping("/compras/ordenado/decrescente")
+    public ResponseEntity<List<Compra>> getComprasOrdenadoDescendente() {
+        List<Compra> compras = compraService.getAllOrdenadoDescendente();
         return ResponseEntity.ok(compras);
     }
 }

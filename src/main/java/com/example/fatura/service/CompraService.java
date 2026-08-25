@@ -27,8 +27,18 @@ public class CompraService {
         return compras;
     }
 
-    public List<Compra> getAllOrdenado() {
+    public List<Compra> getAllOrdenadoCrescente() {
         List<Compra> compras = compraRepository.findAll(Sort.by("valor"));
+
+        if (compras.isEmpty()) {
+            throw new ResourceNotFoundException("Nenhuma compra encontrada");
+        }
+
+        return compras;
+    }
+
+    public List<Compra> getAllOrdenadoDescendente() {
+        List<Compra> compras = compraRepository.findAll(Sort.by(Sort.Direction.DESC, "valor"));
 
         if (compras.isEmpty()) {
             throw new ResourceNotFoundException("Nenhuma compra encontrada");
