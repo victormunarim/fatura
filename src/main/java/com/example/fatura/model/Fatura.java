@@ -1,5 +1,6 @@
 package com.example.fatura.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -10,11 +11,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Data
 public class Fatura {
     @Id @GeneratedValue
     private Long id;
     private LocalDate dataUpload;
 
     @OneToMany(mappedBy = "fatura")
+    @JsonIgnore
     private List<Compra> compras;
 }
