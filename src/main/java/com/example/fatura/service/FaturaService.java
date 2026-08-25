@@ -94,6 +94,7 @@ public class FaturaService {
         fatura.setDataUpload(LocalDate.now());
         faturaRepository.save(fatura);
         compras.forEach(c -> c.setFatura(fatura));
+
         return compraRepository.saveAll(compras);
     }
 }
