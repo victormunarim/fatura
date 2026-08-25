@@ -30,3 +30,4 @@ Os gastos processados deverão ser disponibilizados de forma estruturada.
 
 * Spring framework;
 * Java 25;
+* H2;
