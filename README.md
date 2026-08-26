@@ -31,3 +31,44 @@ Os gastos processados deverão ser disponibilizados de forma estruturada.
 * Spring framework;
 * Java 25;
 * H2;
+
+## Manual
+
+### Arquitetura
+
+Camadas: Controller → Service → Repository → Banco (H2), com tratamento de exceções.
+
+* FaturaController: recebe as requisições de processamento e exclusão da fatura.
+* FaturaService: extrai o texto do PDF (PDFBox), interpreta os lançamentos por regex,
+  classifica cada um por categoria e salva.
+* CompraController: expõe as consultas sobre as compras já salvas.
+* CompraService: consulta, filtra e ordena via CompraRepository; lança
+  ResourceNotFoundException quando a consulta não encontra nada.
+* GlobalExceptionHandler: intercepta as exceções lançadas pelos services e converte em
+  respostas HTTP padronizadas.
+
+### Modelo de dados
+
+`Fatura` (1) <— (N) `Compra`
+
+**Fatura**
+
+Colunas: id e dataUpload
+
+**Compra**
+
+Colunas: id, data, descricao, valor, categoria e fatura
+
+Cada requisição (POST /faturas) cria uma nova Fatura e associa a ela todas as compras
+extraídas naquela requisição.
+
+### API
+
+| Requisição | Endpoint                      | Parâmetros | Sucesso | Erro |
+|------------|-------------------------------|---|---|---|
+| POST       | /faturas                      | — | `200` + lista de Compra criadas | — |
+| DELETE     | /faturas/deleta               | — | `204` sem corpo | — |
+| GET        | /compras                      | — | `200` + lista de Compra | `404` "Nenhuma compra encontrada" |
+| GET        | /compras/ordenado/crescente   | — | `200` + lista ordenada por valor (asc) | `404` idem |
+| GET        | /compras/ordenado/decrescente | — | `200` + lista ordenada por valor (desc) | `404` idem |
+| GET        | /compras/categoria/{categoria} | categoria  | `200` + lista filtrada | `404` "Nenhuma compra encontrada para a categoria: {categoria}" |
