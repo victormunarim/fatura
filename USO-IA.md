@@ -15,3 +15,11 @@ Código da distribuição de gastos
 - Uso: apoio ao longo da codificação
 - Artefato: CategoriaGasto.java, CompraService.java e CompraController.java
 - Validação: aplicação executada e endpoint testado manualmente
+
+Monitoramento de pasta
+
+- Data: 12/10/2026
+- Ferramenta: Gemini
+- Uso: geração de código
+- Artefato: FileMonitorService.java
+- Validação: foi testada e simplificada para o projeto

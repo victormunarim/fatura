@@ -1,6 +1,6 @@
 # Fatura
 
-Sistema backend para análise, processamento e organização de faturas de cartão de crédito desenvolvido aplicações web com o objetivo de melhorar a organização financeira
+Sistema backend para análise, processamento e organização de faturas de cartão de crédito desenvolvido para aplicações web com o objetivo de melhorar a organização financeira. Conta com monitoramento em tempo real via WebSocket e interface para acompanhamento ao vivo.
 
 ## Público alvo
 
@@ -11,26 +11,32 @@ Além de visualizar de forma personalizavel.
 
 * Deve ser possível ordenar os valores; Ex: Usuário escolhe critério de ordenação (crescente/decrescente) → sistema reordena a lista pelo valor.
 * Deve ter filtros de pesquisa para agrupar as compras por categoria ou descrição; Ex: Usuário seleciona uma categoria ou descrição → sistema exibe apenas os lançamentos correspondentes.
-* Upload de arquivos de fatura em formato PDF; Ex: Usuário seleciona um arquivo PDF → sistema recebe o arquivo.
+* Upload e monitoramento de arquivos de fatura em formato PDF; Ex: Usuário adiciona arquivo no diretório `fatura/` → sistema detecta automaticamente.
 * Validação do tipo e formato do arquivo; Ex: Sistema verifica se a extensão é .pdf e se o tamanho está dentro do limite → aprova o arquivo para processamento.
-* Processamento automático da fatura após o upload; Ex: Sistema lê o PDF, extrai data, descrição, valor e parcela de cada lançamento, e os disponibiliza para listagem.
+* Processamento automático da fatura após upload ou detecção; Ex: Sistema lê o PDF, extrai data, descrição, valor e parcela de cada lançamento, e os disponibiliza para listagem.
+* Notificação em tempo real via WebSocket; Ex: Ao detectar ou processar faturas, envia os lançamentos em JSON para os clientes conectados.
+* Visualização web ao vivo; Ex: Página estática (`index.html`) conectada ao WebSocket exibe eventos e faturas processadas.
 
 ## Requisitos não funcionais
 
 * Desempenho: Processar faturas de até um tamanho específico (a definir).
 * Confiabilidade: Falha na extração da fatura não compromete o resto da aplicação.
-* Compatibilidade: suporte para fatura do banco Itaú).
+* Compatibilidade: suporte para fatura do banco Itaú.
 
 ## Modelagem
 
-O sistema sera somente o back-end e o arquivo de fatura deve estar em fatura/fatura.pdf.
-Os gastos processados deverão ser disponibilizados de forma estruturada.
+O sistema conta com backend Spring Boot, monitoramento contínuo da pasta `fatura/` via Java NIO (`WatchService`) e interface estática para visualização.
+Os gastos processados são disponibilizados via REST e via eventos WebSocket.
 
 ## Stacks
 
 * Spring framework;
 * Java 25;
 * H2;
+
+## Autoria
+
+A interface de monitoramento e lógica de websocket foi pega da atividade de bate-papo apresentada pelo professor e ajustada para o nosso uso.
 
 ## Casos de uso
 

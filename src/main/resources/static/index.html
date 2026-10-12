@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Monitor de Fatura (WebSocket)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #fafafa;
+        }
+        #messages {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 10px;
+            resize: vertical;
+            font-family: monospace;
+            padding: 10px;
+            background-color: #1e1e1e;
+            color: #00ff00;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Monitor de Fatura ao Vivo</h2>
+<p>Aguardando eventos do servidor...</p>
+
+<textarea id="messages" readonly></textarea>
+
+<script>
+    const loc = window.location;
+    const wsProtocol = loc.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${wsProtocol}//${loc.host}/ws`;
+    const socket = new WebSocket(wsUrl);
+
+    const messagesBox = document.getElementById("messages");
+
+    socket.addEventListener("open", () => {
+        messagesBox.value += "[SISTEMA] Conectado ao servidor WebSocket. Aguardando arquivos...\n";
+    });
+
+    socket.addEventListener("message", event => {
+        if (event.data.startsWith("COMPRAS_JSON:")) {
+            try {
+                const jsonStr = event.data.substring("COMPRAS_JSON:".length);
+                const compras = JSON.parse(jsonStr);
+                
+                messagesBox.value += "FATURA PROCESSADA\n";
+                messagesBox.value += "Foram encontradas " + compras.length + " compras no extrato:\n\n";
+                
+                compras.forEach((c, i) => {
+                    messagesBox.value += `  ${i+1}. [${c.data}] ${c.categoria.toUpperCase()} - ${c.descricao}: R$ ${c.valor}\n`;
+                });
+            } catch (e) {
+                messagesBox.value += "[ERRO] " + event.data + "\n";
+            }
+        } else {
+            messagesBox.value += "[EVENTO] " + event.data + "\n";
+        }
+    });
+
+    socket.addEventListener("close", () => {
+        messagesBox.value += "[SISTEMA] Conexão com o servidor foi encerrada.\n";
+    });
+</script>
+
+</body>
+</html>
