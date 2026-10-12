@@ -44,6 +44,10 @@ Os gastos processados deverão ser disponibilizados de forma estruturada.
   3. O sistema devolve cada categoria com o total e o percentual sobre o total de gastos, da maior para a menor
 - **Fluxo alternativo:** se não houver nenhum gasto (banco vazio ou só entradas), o sistema responde `404`
 
+## Uso de IA
+
+[USO-IA.md](USO-IA.md)
+
 ## Manual
 
 ### Arquitetura
@@ -98,4 +102,4 @@ extraídas naquela requisição.
 | GET        | /compras/categoria/{categoria} | categoria  | `200` + lista filtrada | `404` "Nenhuma compra encontrada para a categoria: {categoria}" |
 | GET | /compras/distribuicao | — | `200` + lista de `{categoria, total, percentual}` | `404` "Nenhum gasto encontrado" |
 
-#### Manual de implantação e utilização: [docs/manual-implantacao-utilizacao.md](docs/manual-implantacao-utilizacao.md)
+#### Manual de implantação e utilização: [manual-implantacao-utilizacao.md](manual-implantacao-utilizacao.md)

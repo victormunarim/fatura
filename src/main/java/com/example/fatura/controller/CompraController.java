@@ -3,7 +3,6 @@ package com.example.fatura.controller;
 import com.example.fatura.model.Compra;
 import com.example.fatura.service.CompraService;
 import com.example.fatura.dto.CategoriaGasto;
-import jdk.javadoc.doclet.Reporter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
