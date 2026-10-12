@@ -23,3 +23,11 @@ Monitoramento de pasta
 - Uso: geração de código
 - Artefato: FileMonitorService.java
 - Validação: foi testada e simplificada para o projeto
+
+Diagrama de websocket
+
+- Data: 12/10/2026
+- Ferramenta: Gemini
+- Uso: geração de do diagrama
+- Artefato: README.md
+- Validação: foi validado para o contexto do projeto
