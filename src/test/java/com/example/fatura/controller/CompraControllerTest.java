@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest // sobe a aplicação inteira, com o banco H2
 @AutoConfigureMockMvc // permite simular requisições HTTP sem abrir o servidor
@@ -60,5 +61,29 @@ class CompraControllerTest {
 
         mockMvc.perform(get("/compras/distribuicao"))
                 .andExpect(status().isNotFound());
+    }
+
+    // cenario de falha, que existem compras, mas nenhuma é gasto (só entradas)
+    @Test
+    void deveDevolver404QuandoSoExistemEntradas() throws Exception {
+        compraRepository.deleteAll();
+        salvarCompra("Rendimento", "100.00"); // só entrada, nenhum gasto
+
+        mockMvc.perform(get("/compras/distribuicao"))
+                .andExpect(status().isNotFound());
+    }
+
+    // FLUXO COMPLETO como o usuário usaria: processa o PDF e depois consulta a distribuição
+    @Test
+    void deveProcessarAFaturaEDevolverADistribuicaoDosGastos() throws Exception {
+        compraRepository.deleteAll(); // começa sem nenhuma compra
+
+        mockMvc.perform(post("/faturas"))
+                .andExpect(status().isOk());
+        
+        mockMvc.perform(get("/compras/distribuicao"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].categoria").isNotEmpty())
+                .andExpect(jsonPath("$[0].percentual").isNumber());
     }
 }
