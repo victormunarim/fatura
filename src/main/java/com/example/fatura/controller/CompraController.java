@@ -2,6 +2,7 @@ package com.example.fatura.controller;
 
 import com.example.fatura.model.Compra;
 import com.example.fatura.service.CompraService;
+import com.example.fatura.dto.CategoriaGasto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,5 +41,11 @@ public class CompraController {
     public ResponseEntity<List<Compra>> getComprasPorCategoria(@PathVariable String categoria) {
         List<Compra> compras = compraService.findByCategoria(categoria);
         return ResponseEntity.ok(compras);
+    }
+
+    @GetMapping("/compras/distribuicao")
+    public ResponseEntity<List<CategoriaGasto>> getDistribuicaoGastos(){
+        List<CategoriaGasto> distribuicao = compraService.getDistribuicaoGastos();
+        return ResponseEntity.ok(distribuicao);
     }
 }
