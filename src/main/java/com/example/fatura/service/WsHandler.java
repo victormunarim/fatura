@@ -67,6 +67,12 @@ public class WsHandler extends TextWebSocketHandler {
         }
     }
 
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable exception) {
+        IO.println("Erro de transporte na sessão " + session.getId() + ": " + exception.getMessage());
+        enviarMensagemErro(session, "Erro de transporte: " + exception.getMessage());
+    }
+
     private void processarEEnviarCompras(WebSocketSession session, Path arquivo) {
         try {
             if (session.isOpen()) {
@@ -79,8 +85,19 @@ public class WsHandler extends TextWebSocketHandler {
 
                 session.sendMessage(new TextMessage("COMPRAS_JSON:" + jsonCompras));
             }
+        } catch (Exception e) {
+            IO.println("Erro ao processar arquivo " + arquivo.getFileName() + ": " + e.getMessage());
+            enviarMensagemErro(session, "Erro ao processar arquivo " + arquivo.getFileName() + ": " + e.getMessage());
+        }
+    }
+
+    private void enviarMensagemErro(WebSocketSession session, String mensagem) {
+        try {
+            if (session.isOpen()) {
+                session.sendMessage(new TextMessage("ERRO: " + mensagem));
+            }
         } catch (IOException e) {
-            System.err.println("Erro ao processar e enviar compras para sessão " + session.getId() + ": " + e.getMessage());
+            System.err.println("Falha ao enviar mensagem de erro para sessão " + session.getId() + ": " + e.getMessage());
         }
     }
 }
