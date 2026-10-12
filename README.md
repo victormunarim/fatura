@@ -32,6 +32,18 @@ Os gastos processados deverão ser disponibilizados de forma estruturada.
 * Java 25;
 * H2;
 
+## Casos de uso
+
+### Consultar distribuição de gastos por categoria
+
+- **Ator:** usuário
+- **Pré-condição:** fatura/extrato já processado (`POST /faturas`)
+- **Fluxo principal:**
+  1. O usuário solicita a distribuição de gastos
+  2. O sistema soma os gastos (compras de valor negativo) de cada categoria
+  3. O sistema devolve cada categoria com o total e o percentual sobre o total de gastos, da maior para a menor
+- **Fluxo alternativo:** se não houver nenhum gasto (banco vazio ou só entradas), o sistema responde `404`
+
 ## Manual
 
 ### Arquitetura
@@ -46,6 +58,18 @@ Camadas: Controller → Service → Repository → Banco (H2), com tratamento de
   ResourceNotFoundException quando a consulta não encontra nada.
 * GlobalExceptionHandler: intercepta as exceções lançadas pelos services e converte em
   respostas HTTP padronizadas.
+
+#### Diagrama de sequência:
+
+```mermaid
+sequenceDiagram
+    Cliente->>CompraController: GET /compras/distribuicao
+    CompraController->>CompraService: getDistribuicaoGastos()
+    CompraService->>CompraRepository: findAll()
+    CompraRepository-->>CompraService: compras
+    CompraService-->>CompraController: lista de CategoriaGasto
+    CompraController-->>Cliente: 200 + JSON
+```
 
 ### Modelo de dados
 
@@ -72,5 +96,6 @@ extraídas naquela requisição.
 | GET        | /compras/ordenado/crescente   | — | `200` + lista ordenada por valor (asc) | `404` idem |
 | GET        | /compras/ordenado/decrescente | — | `200` + lista ordenada por valor (desc) | `404` idem |
 | GET        | /compras/categoria/{categoria} | categoria  | `200` + lista filtrada | `404` "Nenhuma compra encontrada para a categoria: {categoria}" |
+| GET | /compras/distribuicao | — | `200` + lista de `{categoria, total, percentual}` | `404` "Nenhum gasto encontrado" |
 
-### Manual de implantação e utilização: [docs/manual-implantacao-utilizacao.md](docs/manual-implantacao-utilizacao.md)
+#### Manual de implantação e utilização: [docs/manual-implantacao-utilizacao.md](docs/manual-implantacao-utilizacao.md)
