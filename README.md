@@ -72,3 +72,5 @@ extraídas naquela requisição.
 | GET        | /compras/ordenado/crescente   | — | `200` + lista ordenada por valor (asc) | `404` idem |
 | GET        | /compras/ordenado/decrescente | — | `200` + lista ordenada por valor (desc) | `404` idem |
 | GET        | /compras/categoria/{categoria} | categoria  | `200` + lista filtrada | `404` "Nenhuma compra encontrada para a categoria: {categoria}" |
+
+### Manual de implantação e utilização: [docs/manual-implantacao-utilizacao.md](docs/manual-implantacao-utilizacao.md)

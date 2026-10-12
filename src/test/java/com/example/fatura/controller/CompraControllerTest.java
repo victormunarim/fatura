@@ -77,10 +77,9 @@ class CompraControllerTest {
     @Test
     void deveProcessarAFaturaEDevolverADistribuicaoDosGastos() throws Exception {
         compraRepository.deleteAll(); // começa sem nenhuma compra
-
         mockMvc.perform(post("/faturas"))
                 .andExpect(status().isOk());
-        
+
         mockMvc.perform(get("/compras/distribuicao"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].categoria").isNotEmpty())
