@@ -72,7 +72,7 @@ public class FaturaService {
             compra.setData(LocalDate.parse(dataTexto, FORMATO_DATA));
             compra.setDescricao(descricao);
             compra.setValor(new BigDecimal(valorTexto));
-           compra.setCategoria(classificar(descricao));
+            compra.setCategoria(classificar(descricao));
 
             compras.add(compra);
         }

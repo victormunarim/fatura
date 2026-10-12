@@ -37,8 +37,9 @@ A aplicação sobe em `http://localhost:8080`. No console aparece
 - Banco: H2 **em memória** (`jdbc:h2:mem:fatura`, usuário `sa`, sem senha). Os dados são
   apagados sempre que a aplicação reinicia.
 - Para mudar a porta, acrescente `server.port=8081` nesse arquivo.
-- Arquivo processado: `fatura/itau_extrato.pdf` (caminho relativo à raiz do projeto;
-  execute a aplicação a partir da raiz). Só o layout de extrato do Itaú do arquivo de
+- Diretório monitorado: pasta `fatura/` (relativa à raiz do projeto). O `FileMonitorService`
+  monitora automaticamente novos arquivos adicionados nessa pasta.
+- Arquivo processado via REST: `fatura/itau_extrato.pdf`. Só o layout de extrato do Itaú do arquivo de
   exemplo é reconhecido (linhas no formato `dd/mm/aaaa DESCRIÇÃO valor`).
 
 ## 3. Utilização
@@ -46,7 +47,7 @@ A aplicação sobe em `http://localhost:8080`. No console aparece
 Exemplos no PowerShell (`irm` = `Invoke-RestMethod`). No Linux/macOS use `curl`.
 Não coloque barra `/` no final das URLs.
 
-| O que fazer | Comando |
+| O que fazer | Comando / URL |
 |---|---|
 | 1. Processar o PDF e salvar as compras | `irm -Method POST http://localhost:8080/faturas` |
 | Listar todas as compras | `irm http://localhost:8080/compras` |
@@ -54,6 +55,7 @@ Não coloque barra `/` no final das URLs.
 | Filtrar por categoria | `irm http://localhost:8080/compras/categoria/Pix` |
 | Ver a distribuição dos gastos por categoria | `irm http://localhost:8080/compras/distribuicao` |
 | Apagar todas as compras e faturas | `irm -Method DELETE http://localhost:8080/faturas/deleta` |
+| Monitorar faturas ao vivo pelo navegador | Acessar `http://localhost:8080` (ou `/index.html`) |
 
 Exemplo de resposta da distribuição (os valores dependem do PDF):
 ```json
@@ -64,6 +66,12 @@ Exemplo de resposta da distribuição (os valores dependem do PDF):
 ```
 Erros: `404` quando não há dados para a consulta; `500` para erros inesperados. A lista
 completa de endpoints está no `README.md`.
+
+### 3.1 Monitoramento ao vivo (WebSocket)
+1. Inicie a aplicação e acesse `http://localhost:8080` no navegador.
+2. A página web conecta automaticamente a `ws://localhost:8080/ws`.
+3. Caso já existam arquivos na pasta `fatura/`, eles são processados e enviados de imediato.
+4. Ao adicionar um novo arquivo PDF em `fatura/`, o sistema detecta, processa e transmite os dados com o prefixo `COMPRAS_JSON:` para exibição em tempo real na tela.
 
 ## 4. Executar os testes
 - IntelliJ: clique direito em `src/test` → *Run Tests*.
