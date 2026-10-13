@@ -251,6 +251,27 @@ Colunas: id, data, descricao, valor, categoria e fatura
 Cada requisição (POST /faturas) cria uma nova Fatura e associa a ela todas as compras
 extraídas naquela requisição.
 
+#### Diagrama ER
+
+```mermaid
+erDiagram
+    FATURA ||--o{ COMPRA : possui
+    FATURA {
+        Long id PK
+        LocalDate dataUpload
+    }
+    COMPRA {
+        Long id PK
+        LocalDate data
+        String descricao
+        BigDecimal valor
+        String categoria
+        Long fatura FK
+    }
+```
+
+Uma fatura tem várias compras; cada compra pertence a uma fatura (chave estrangeira `fatura`).
+
 ### API e Comunicação
 
 | Tipo | Endpoint | Parâmetros | Sucesso | Erro |
