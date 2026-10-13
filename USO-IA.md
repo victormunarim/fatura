@@ -40,3 +40,11 @@ OpenAPI (documentação da API)
 - Uso: roteiro e código das anotações do springdoc (descrições, exemplos e códigos de resposta)
 - Artefato: build.gradle, FaturaApplication.java, CompraController.java, FaturaController.java, Compra.java, Fatura.java, CategoriaGasto.java e docs/openapi.yaml
 - Validação: aplicação executada, Swagger UI conferido em cada endpoint
+
+Diagramas
+
+- Data: 13/10/2026
+- Ferramenta: Claude
+- Uso: criação dos diagramas (classes, ER) em Mermaid
+- Artefato: README.md
+- Validação: diagramas renderizados e conferidos contra as classes
