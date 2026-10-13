@@ -89,6 +89,115 @@ Camadas: Controller / Handler → Service → Repository → Banco (H2), com tra
   respostas HTTP padronizadas.
 * Interface Web (`static/index.html`): cliente visual que conecta ao WebSocket e exibe logs e faturas processadas ao vivo.
 
+#### Diagramas de classes
+
+##### 1. Domínio e REST
+
+```mermaid
+classDiagram
+    class Fatura {
+        -Long id
+        -LocalDate dataUpload
+    }
+    class Compra {
+        -Long id
+        -LocalDate data
+        -BigDecimal valor
+        -String categoria
+        -String descricao
+    }
+    class CategoriaGasto {
+        <<DTO>>
+        -String categoria
+        -BigDecimal total
+        -double percentual
+    }
+    class FaturaController {
+        +processarFatura()
+        +deleteAll()
+    }
+    class CompraController {
+        +getCompras()
+        +getComprasOrdenadoCrescente()
+        +getComprasOrdenadoDescendente()
+        +getComprasPorCategoria(String categoria)
+        +getDistribuicaoGastos()
+    }
+    class FaturaService {
+        +extrairLinhas(String caminhoPdf) List~String~
+        +analisarCompras(List~String~ linhas) List~Compra~
+        +salvar(List~Compra~ compras) List~Compra~
+        +deleteAll()
+    }
+    class CompraService {
+        +getAll() List~Compra~
+        +getAllOrdenadoCrescente() List~Compra~
+        +getAllOrdenadoDescendente() List~Compra~
+        +findByCategoria(String categoria) List~Compra~
+        +getDistribuicaoGastos() List~CategoriaGasto~
+        +calcularDistribuicao(List~Compra~ compras) List~CategoriaGasto~
+    }
+    class FaturaRepository {
+        <<interface>>
+    }
+    class CompraRepository {
+        <<interface>>
+        +findByCategoriaIgnoreCase(String categoria) List~Compra~
+    }
+    class GlobalExceptionHandler {
+        +handleResourceNotFound(ResourceNotFoundException erro)
+        +handleIOException(IOException erro)
+        +handleGeneralException(Exception erro)
+    }
+    class ResourceNotFoundException
+
+    Fatura "1" -- "*" Compra : possui
+    FaturaController --> FaturaService
+    CompraController --> CompraService
+    FaturaService --> FaturaRepository
+    FaturaService --> CompraRepository
+    CompraService --> CompraRepository
+    FaturaRepository ..> Fatura : gerencia
+    CompraRepository ..> Compra : gerencia
+    CompraService ..> CategoriaGasto : cria
+    CompraService ..> ResourceNotFoundException : lança
+    GlobalExceptionHandler ..> ResourceNotFoundException : trata
+    ResourceNotFoundException --|> RuntimeException
+```
+
+##### 2. WebSocket e monitoramento de pasta
+
+```mermaid
+classDiagram
+    class FileMonitorService {
+        -ApplicationEventPublisher eventPublisher
+        +getArquivoExistente() List~Path~
+    }
+    class WsHandler {
+        -Set~WebSocketSession~ sessions
+        -ObjectMapper objectMapper
+        +afterConnectionEstablished(WebSocketSession session)
+        +afterConnectionClosed(WebSocketSession session, CloseStatus status)
+        +handleArquivoDetectado(ArquivoDetectadoEvent event)
+        +handleTransportError(WebSocketSession session, Throwable exception)
+    }
+    class WebSocketConfig {
+        +registerWebSocketHandlers(WebSocketHandlerRegistry registry)
+    }
+    class ArquivoDetectadoEvent {
+        -Path arquivo
+    }
+    class FaturaService
+
+    WsHandler --|> TextWebSocketHandler
+    ArquivoDetectadoEvent --|> ApplicationEvent
+    WebSocketConfig --> WsHandler : registra em /ws
+    WsHandler --> FileMonitorService
+    WsHandler --> FaturaService
+    FileMonitorService ..> ArquivoDetectadoEvent : publica
+    WsHandler ..> ArquivoDetectadoEvent : escuta
+```
+
 #### Diagramas de sequência:
 
 ##### 1. Distribuição de gastos (REST):
@@ -141,6 +250,27 @@ Colunas: id, data, descricao, valor, categoria e fatura
 
 Cada requisição (POST /faturas) cria uma nova Fatura e associa a ela todas as compras
 extraídas naquela requisição.
+
+#### Diagrama ER
+
+```mermaid
+erDiagram
+    FATURA ||--o{ COMPRA : possui
+    FATURA {
+        Long id PK
+        LocalDate dataUpload
+    }
+    COMPRA {
+        Long id PK
+        LocalDate data
+        String descricao
+        BigDecimal valor
+        String categoria
+        Long fatura FK
+    }
+```
+
+Uma fatura tem várias compras; cada compra pertence a uma fatura (chave estrangeira `fatura`).
 
 ### API e Comunicação
 
