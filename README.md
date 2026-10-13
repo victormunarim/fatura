@@ -156,4 +156,9 @@ extraídas naquela requisição.
 | WebSocket | /ws | — | Conexão estabelecida e streaming de mensagens (`COMPRAS_JSON:`) | — |
 | Web UI | /index.html | — | `200` página de monitoramento ao vivo | — |
 
+### Documentação da API (OpenAPI)
+
+- Swagger UI (com a aplicação rodando): http://localhost:8080/swagger-ui/index.html
+- Especificação: [docs/openapi.yaml](docs/openapi.yaml)
+
 #### Manual de implantação e utilização: [manual-implantacao-utilizacao.md](manual-implantacao-utilizacao.md)
