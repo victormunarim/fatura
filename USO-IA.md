@@ -31,3 +31,12 @@ Diagrama de websocket
 - Uso: geração de do diagrama
 - Artefato: README.md
 - Validação: foi validado para o contexto do projeto
+- 
+
+OpenAPI (documentação da API)
+
+- Data: 13/10/2026
+- Ferramenta: Claude
+- Uso: roteiro e código das anotações do springdoc (descrições, exemplos e códigos de resposta)
+- Artefato: build.gradle, FaturaApplication.java, CompraController.java, FaturaController.java, Compra.java, Fatura.java, CategoriaGasto.java e docs/openapi.yaml
+- Validação: aplicação executada, Swagger UI conferido em cada endpoint
