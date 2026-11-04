@@ -101,4 +101,16 @@ public class WsHandler extends TextWebSocketHandler {
             System.err.println("Falha ao enviar mensagem de erro para sessão " + session.getId() + ": " + e.getMessage());
         }
     }
+
+    public void notificarTodos(String mensagem){
+        for(WebSocketSession session : sessions){
+            try{
+                if(session.isOpen()){
+                    session.sendMessage(new TextMessage(mensagem));
+                }
+            }catch(IOException e){
+                System.err.println("Falha ao notificar sessão " + session.getId() + ": " + e.getMessage());
+            }
+        }
+    }
 }
