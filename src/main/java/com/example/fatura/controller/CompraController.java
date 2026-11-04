@@ -1,7 +1,9 @@
 package com.example.fatura.controller;
 
+import com.example.fatura.dto.AtualizaCategoriaRequest;
 import com.example.fatura.dto.CategoriaGasto;
 import com.example.fatura.dto.CompraDTO;
+import com.example.fatura.exception.RequisicaoInvalidaException;
 import com.example.fatura.model.Compra;
 import com.example.fatura.service.CompraService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirementEntry;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -79,5 +82,17 @@ public class CompraController {
     public ResponseEntity<Void> apagar(@PathVariable Long id) {
         compraService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Corrige a categoria de uma compra")
+    @ApiResponse(responseCode = "200", description = "Compra atualizada")
+    @ApiResponse(responseCode = "400", description = "Categoria vazia")
+    @ApiResponse(responseCode = "404", description = "Compra não existe")
+    @PatchMapping("/compras/{id}")
+    public ResponseEntity<CompraDTO> atualizarCategoria(@PathVariable Long id, @RequestBody AtualizaCategoriaRequest dados){
+        if(dados.getCategoria() == null || dados.getCategoria().isBlank()){
+            throw new RequisicaoInvalidaException("Informe a categoria");
+        }
+        return ResponseEntity.ok(CompraDTO.de(compraService.atualizarCategoria(id, dados.getCategoria())));
     }
 }

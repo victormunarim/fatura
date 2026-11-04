@@ -99,5 +99,11 @@ public class CompraService {
 
         return resultado;
     }
+
+    public Compra atualizarCategoria(Long id, String categoria){
+        Compra compra = findById(id);
+        compra.setCategoria(categoria);
+        return compraRepository.save(compra);
+    }
 }
 
