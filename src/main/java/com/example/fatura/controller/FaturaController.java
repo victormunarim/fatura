@@ -1,5 +1,6 @@
 package com.example.fatura.controller;
 
+import com.example.fatura.dto.CompraDTO;
 import com.example.fatura.model.Compra;
 import com.example.fatura.service.FaturaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,12 +36,12 @@ public class FaturaController {
             content = @Content(mediaType = "text/plain",
                     examples = @ExampleObject(value = "Erro ao ler ou processar arquivo: fatura/itau_extrato.pdf")))
     @PostMapping("/faturas")
-    public ResponseEntity<List<Compra>> processarFatura() throws IOException {
+    public ResponseEntity<List<CompraDTO>> processarFatura() throws IOException {
         List<String> linhas = faturaService.extrairLinhas(CAMINHO);
         List<Compra> compras = faturaService.analisarCompras(linhas);
         List<Compra> saved = faturaService.salvar(compras);
 
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(saved.stream().map(CompraDTO::de).toList());
     }
 
     @Operation(summary = "Apaga todas as compras e faturas",

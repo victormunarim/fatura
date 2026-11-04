@@ -1,6 +1,7 @@
 package com.example.fatura.controller;
 
 import com.example.fatura.dto.CategoriaGasto;
+import com.example.fatura.dto.CompraDTO;
 import com.example.fatura.model.Compra;
 import com.example.fatura.service.CompraService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +33,7 @@ public class CompraController {
             description = "Devolve as compras salvas. 'categoria' filtra; 'ordem' (asc ou desc) ordena por valor. Se vier categoria, ela tem prioridade. Lista vazia devolve [].")
     @ApiResponse(responseCode = "200", description = "Lista de compras (pode ser vazia)")
     @GetMapping("/compras")
-    public ResponseEntity<List<Compra>> listar(
+    public ResponseEntity<List<CompraDTO>> listar(
             @Parameter(description = "Filtra pela categoria", example = "Pix")
             @RequestParam(required = false) String categoria,
             @Parameter(description = "Ordena pelo valor: asc ou desc", example = "desc")
@@ -48,7 +49,7 @@ public class CompraController {
         } else {
             compras = compraService.getAll();
         }
-        return ResponseEntity.ok(compras);
+        return ResponseEntity.ok(compras.stream().map(CompraDTO::de).toList());
     }
 
     @Operation(summary = "Distribuição dos gastos por categoria",
