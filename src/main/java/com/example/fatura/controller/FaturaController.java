@@ -46,7 +46,7 @@ public class FaturaController {
     @Operation(summary = "Apaga todas as compras e faturas",
             description = "Remove todos os dados salvos no banco.")
     @ApiResponse(responseCode = "204", description = "Dados apagados (sem corpo na resposta)")
-    @DeleteMapping("/faturas/deleta")
+    @DeleteMapping("/faturas")
     public ResponseEntity<Void> deleteAll() {
         faturaService.deleteAll();
         return ResponseEntity.noContent().build();
