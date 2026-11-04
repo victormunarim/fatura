@@ -23,42 +23,18 @@ public class CompraService {
     }
 
     public List<Compra> getAll() {
-        List<Compra> compras = compraRepository.findAll();
-
-        if (compras.isEmpty()) {
-            throw new ResourceNotFoundException("Nenhuma compra encontrada");
-        }
-
-        return compras;
+        return compraRepository.findAll();
     }
 
     public List<Compra> getAllOrdenadoCrescente() {
-        List<Compra> compras = compraRepository.findAll(Sort.by("valor"));
-
-        if (compras.isEmpty()) {
-            throw new ResourceNotFoundException("Nenhuma compra encontrada");
-        }
-
-        return compras;
+        return compraRepository.findAll(Sort.by("valor"));
     }
 
     public List<Compra> getAllOrdenadoDescendente() {
-        List<Compra> compras = compraRepository.findAll(Sort.by(Sort.Direction.DESC, "valor"));
-
-        if (compras.isEmpty()) {
-            throw new ResourceNotFoundException("Nenhuma compra encontrada");
-        }
-
-        return compras;
+        return compraRepository.findAll(Sort.by(Sort.Direction.DESC, "valor"));
     }
     public List<Compra> findByCategoria(String categoria) {
-        List<Compra> compras = compraRepository.findByCategoriaIgnoreCase(categoria);
-
-        if (compras.isEmpty()) {
-            throw new ResourceNotFoundException("Nenhuma compra encontrada para a categoria: " + categoria);
-        }
-
-        return compras;
+        return compraRepository.findByCategoriaIgnoreCase(categoria);
     }
 
     // busca as compras no banco e devolve a distribuição dos gastos por categoria
