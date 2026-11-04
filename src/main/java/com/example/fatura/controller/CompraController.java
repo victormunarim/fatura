@@ -20,6 +20,7 @@ import java.util.List;
 
 // @Tag agrupa os endpoints desta classe sob o nome "Compras" no Swagger
 @Tag(name = "Compras", description = "Consulta, ordenação, filtro e análise das compras salvas")
+@RequestMapping("/api/v1")
 @RestController
 public class CompraController {
 
