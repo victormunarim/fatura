@@ -96,6 +96,7 @@ public class FileMonitorService {
         monitorThread.start();
     }
 
+    // espera o arquivo terminar de ser gravado: compara o tamanho a cada 200 ms
     private void aguardarEscritaCompleta(Path arquivo) {
         try {
             long tamanhoAnterior = -1;
@@ -105,9 +106,11 @@ public class FileMonitorService {
                     break;
                 }
                 tamanhoAnterior = tamanhoAtual;
+                Thread.sleep(200); // pausa: antes o laço rodava sem parar e ocupava a CPU
             }
         } catch (IOException e) {
             System.err.println("Erro ao aguardar gravação do arquivo: " + e.getMessage());
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
     }
