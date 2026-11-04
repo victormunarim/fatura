@@ -9,7 +9,9 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -30,8 +32,16 @@ public class FaturaService {
         this.faturaRepository = faturaRepository;
     }
 
+    // usada pelo monitor de pasta (WebSocket): abre o arquivo e reaproveita a outra versão
     public List<String> extrairLinhas(String caminhoPdf) throws IOException {
-        try (PDDocument documento = PDDocument.load(new File(caminhoPdf))) {
+        try (InputStream pdf = new FileInputStream(caminhoPdf)) {
+            return extrairLinhas(pdf);
+        }
+    }
+
+    // usada pelo upload: lê o PDF direto do que o cliente enviou
+    public List<String> extrairLinhas(InputStream pdf) throws IOException {
+        try (PDDocument documento = PDDocument.load(pdf)) {
             PDFTextStripper extrator = new PDFTextStripper();
             String texto = extrator.getText(documento);
             List<String> linhas = new ArrayList<>();
