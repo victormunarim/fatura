@@ -3,6 +3,7 @@ package com.example.fatura.controller;
 import com.example.fatura.dto.CompraDTO;
 import com.example.fatura.model.Compra;
 import com.example.fatura.service.FaturaService;
+import com.example.fatura.service.WsHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -26,9 +27,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class FaturaController {
 
     private final FaturaService faturaService;
+    private final WsHandler wsHandler;
 
-    public FaturaController(FaturaService faturaService) {
+    public FaturaController(FaturaService faturaService, WsHandler wsHandler) {
         this.faturaService = faturaService;
+        this.wsHandler = wsHandler;
     }
 
     @Operation(summary = "Envia o PDF e salva as compras",
@@ -44,6 +47,8 @@ public class FaturaController {
         List<String> linhas = faturaService.extrairLinhas(arquivo.getInputStream());
         List<Compra> compras = faturaService.analisarCompras(linhas);
         List<Compra> saved = faturaService.salvar(compras);
+
+        wsHandler.notificarTodos("Upload processado: " + saved.size() + " compras salvas");
 
         // 201 Created: um recurso foi criado
         return ResponseEntity.status(HttpStatus.CREATED)
