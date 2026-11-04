@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,5 +63,15 @@ public class CompraController {
     public ResponseEntity<List<CategoriaGasto>> getDistribuicaoGastos(){
         List<CategoriaGasto> distribuicao = compraService.getDistribuicaoGastos();
         return ResponseEntity.ok(distribuicao);
+    }
+
+    @Operation(summary = "Busca uma compra pelo id")
+    @ApiResponse(responseCode = "200", description = "Compra encontrada")
+    @ApiResponse(responseCode = "404", description = "Compra não existe",
+            content = @Content(mediaType = "text/plain",
+                    examples = @ExampleObject(value = "Compra não encontrada: 99")))
+    @GetMapping("/compras/{id}")
+    public ResponseEntity<CompraDTO> buscar(@PathVariable Long id) {
+        return ResponseEntity.ok(CompraDTO.de(compraService.findById(id)));
     }
 }

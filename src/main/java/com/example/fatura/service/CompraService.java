@@ -37,6 +37,10 @@ public class CompraService {
         return compraRepository.findByCategoriaIgnoreCase(categoria);
     }
 
+    public Compra findById(Long id){
+        return compraRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Compra não encontrada: " + id));
+    }
+
     // busca as compras no banco e devolve a distribuição dos gastos por categoria
     public List<CategoriaGasto> getDistribuicaoGastos() {
         List<Compra> compras = compraRepository.findAll();
