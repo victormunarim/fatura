@@ -11,10 +11,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -73,5 +70,14 @@ public class CompraController {
     @GetMapping("/compras/{id}")
     public ResponseEntity<CompraDTO> buscar(@PathVariable Long id) {
         return ResponseEntity.ok(CompraDTO.de(compraService.findById(id)));
+    }
+
+    @Operation(summary = "Apaga uma compra")
+    @ApiResponse(responseCode = "204", description = "Compra apagada")
+    @ApiResponse(responseCode = "404", description = "Compra não existe")
+    @DeleteMapping("/compras/{id}")
+    public ResponseEntity<Void> apagar(@PathVariable Long id) {
+        compraService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

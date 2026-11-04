@@ -41,6 +41,11 @@ public class CompraService {
         return compraRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Compra não encontrada: " + id));
     }
 
+    public void deleteById(Long id){
+        findById(id); // se não existir ja lança 404
+        compraRepository.deleteById(id);
+    }
+
     // busca as compras no banco e devolve a distribuição dos gastos por categoria
     public List<CategoriaGasto> getDistribuicaoGastos() {
         List<Compra> compras = compraRepository.findAll();
