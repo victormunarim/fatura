@@ -24,4 +24,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleGeneralException(Exception erro) {
         return new ResponseEntity<>("Internal server error: " + erro.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(RequisicaoInvalidaException.class)
+    public ResponseEntity<String> handleRequisicaoInvalida(RequisicaoInvalidaException erro) {
+        return new ResponseEntity<>(erro.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
