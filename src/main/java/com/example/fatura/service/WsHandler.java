@@ -1,5 +1,6 @@
 package com.example.fatura.service;
 
+import com.example.fatura.dto.CompraDTO;
 import com.example.fatura.event.ArquivoDetectadoEvent;
 import com.example.fatura.model.Compra;
 import org.springframework.context.event.EventListener;
@@ -81,7 +82,7 @@ public class WsHandler extends TextWebSocketHandler {
                 List<String> linhas = faturaService.extrairLinhas(arquivo.toString());
                 List<Compra> compras = faturaService.analisarCompras(linhas);
 
-                String jsonCompras = objectMapper.writeValueAsString(compras);
+                String jsonCompras = objectMapper.writeValueAsString(compras.stream().map(CompraDTO::de).toList());
 
                 session.sendMessage(new TextMessage("COMPRAS_JSON:" + jsonCompras));
             }
